@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UZBPro — Premium Taklifnoma, Resume & Vizitka</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0a;
+  --panel: #141414;
+  --panel2: #1a1a1a;
+  --gold: #d4af6a;
+  --gold2: #e8c98a;
+  --muted: #999;
+  --border: #2a241c;
+  --text: #f0f0f0;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; border: none; }
+a { color: inherit; text-decoration: none; }
+
+/* Header */
+header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 16px 5%; border-bottom: 1px solid var(--border);
+  position: sticky; top: 0; background: rgba(10,10,10,0.94);
+  backdrop-filter: blur(14px); z-index: 100;
+}
+.logo { font-family: 'Playfair Display', serif; font-size: 24px; font-weight: 700; color: var(--gold); }
+.logo span { color: #fff; }
+.nav-tabs { display: flex; gap: 6px; }
+.nav-tabs button {
+  background: transparent; color: #aaa; padding: 9px 16px;
+  border-radius: 8px; font-size: 14px; font-weight: 500; transition: .2s;
+}
+.nav-tabs button.active, .nav-tabs button:hover {
+  background: rgba(212,175,106,0.12); color: var(--gold);
+}
+.btn {
+  background: linear-gradient(135deg, var(--gold), #c9a05a);
+  color: #1a150c; font-weight: 600; font-size: 13px;
+  padding: 10px 18px; border-radius: 9px; transition: .25s;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(212,175,106,0.25); }
+.btn.secondary {
+  background: transparent; color: var(--gold); border: 1px solid var(--border);
+}
+.btn.secondary:hover { background: rgba(212,175,106,0.08); border-color: var(--gold); }
+
+/* Sections */
+.section { display: none; padding: 30px 5% 50px; }
+.section.active { display: block; }
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: 26px; margin-bottom: 6px;
+}
+.section-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+/* Layout */
+.editor-grid {
+  display: grid; grid-template-columns: 320px 1fr; gap: 24px; align-items: start;
+}
+@media (max-width: 900px) { .editor-grid { grid-template-columns: 1fr; } }
+
+.controls {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px;
+}
+.controls h3 { font-size: 15px; margin-bottom: 12px; color: var(--gold); }
+.controls label { display: block; font-size: 12px; color: #bbb; margin: 12px 0 4px; }
+.controls input, .controls select, .controls textarea {
+  width: 100%; background: var(--panel2); color: #fff;
+  border: 1px solid #333; border-radius: 8px; padding: 10px 12px; font-size: 13px;
+}
+.controls input:focus, .controls select:focus, .controls textarea:focus {
+  outline: none; border-color: var(--gold);
+}
+.controls textarea { min-height: 60px; resize: vertical; }
+.row { display: flex; gap: 8px; }
+.row > * { flex: 1; }
+
+.preview-box {
+  background: #111; border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; display: flex; flex-direction: column; align-items: center;
+}
+.preview-label { align-self: flex-start; color: var(--gold); font-size: 13px; margin-bottom: 14px; }
+
+/* Canvas common */
+.canvas {
+  width: min(100%, 420px); position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; box-shadow: 0 16px 40px rgba(0,0,0,0.45);
+  border-radius: 4px; transition: .3s;
+}
+
+/* Taklifnoma themes */
+.inv-canvas {
+  aspect-ratio: 3/4; padding: 10%; border: 2px solid var(--gold); color: #e6c67c;
+  background: linear-gradient(160deg, #0c0c0c, #2a1f12);
+}
+.inv-canvas[data-theme="gold"] { background: linear-gradient(160deg,#080808,#2e2210); color:#e6c67c; border-color:#d4af6a; }
+.inv-canvas[data-theme="darkgold"] { background: linear-gradient(180deg,#0d0d0d,#1a140c); color:#e8c98a; border-color:#c9a05a; }
+.inv-canvas[data-theme="flower"] { background: linear-gradient(145deg,#f9eadf,#d3a6a4); color:#4c2630; border-color:#a66c74; }
+.inv-canvas[data-theme="minimal"] { background:#f1eadb; color:#29251f; border-color:#b6a17a; }
+.inv-canvas[data-theme="luxury"] { background: linear-gradient(145deg,#2a1520,#120c12); color:#f0d5ad; border-color:#c9a07a; }
+.inv-canvas[data-theme="light"] { background:#fff9f0; color:#5a3b2b; border-color:#d4b48a; }
+.inv-canvas[data-theme="green"] { background: linear-gradient(145deg,#0f2a22,#071612); color:#e8d9a8; border-color:#8a7a4a; }
+.inv-canvas[data-theme="blue"] { background: linear-gradient(145deg,#0c1e33,#060d18); color:#e8d9b0; border-color:#8a7a5a; }
+.inv-canvas[data-theme="rose"] { background: linear-gradient(145deg,#f5e1e6,#c58b9e); color:#54283b; border-color:#a66c7a; }
+.inv-canvas[data-theme="geometry"] { background: linear-gradient(135deg,#141414,#2e251c); color:#e5c27a; border-color:#a88b5a; }
+
+.inv-canvas h2 { font-family: 'Playfair Display', serif; font-size: clamp(22px,4vw,34px); font-weight: 600; margin: 10px 0; }
+.inv-canvas p { font-size: 14px; line-height: 1.55; white-space: pre-wrap; }
+.inv-canvas .orn { font-size: 22px; margin-bottom: 8px; opacity: .9; }
+
+/* Resume canvas */
+.res-canvas {
+  width: min(100%, 480px); aspect-ratio: 1/1.414; background: #fff; color: #222;
+  padding: 28px; text-align: left; border: none; font-size: 13px;
+}
+.res-canvas.header-dark { border-top: 8px solid #1a1a1a; }
+.res-name { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-bottom: 2px; }
+.res-title { color: #666; font-size: 14px; margin-bottom: 12px; }
+.res-contact { font-size: 12px; color: #555; margin-bottom: 16px; }
+.res-section { margin-top: 14px; }
+.res-section h4 { font-size: 13px; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #ddd; padding-bottom: 4px; margin-bottom: 8px; color: #333; }
+.res-item { margin-bottom: 8px; }
+.res-item strong { display: block; font-size: 13px; }
+.res-item span { font-size: 12px; color: #666; }
+
+/* Vizitka canvas */
+.viz-canvas {
+  width: min(100%, 380px); aspect-ratio: 1.75/1; padding: 24px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-radius: 10px; text-align: left;
+}
+.viz-canvas[data-theme="gold"] { background: linear-gradient(135deg,#0c0c0c,#2a1f10); color:#e8c98a; border: 1px solid #d4af6a; }
+.viz-canvas[data-theme="dark"] { background: #111; color:#eee; border: 1px solid #333; }
+.viz-canvas[data-theme="light"] { background: #f8f4ec; color:#2a2218; border: 1px solid #d4c4a0; }
+.viz-canvas[data-theme="blue"] { background: linear-gradient(135deg,#0c1a2e,#061018); color:#d4c8a0; border: 1px solid #8a7a5a; }
+.viz-canvas[data-theme="green"] { background: linear-gradient(135deg,#0c2218,#061210); color:#d4c8a0; border: 1px solid #6a8a5a; }
+
+.viz-name { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 600; }
+.viz-job { font-size: 13px; opacity: .85; margin-bottom: 12px; }
+.viz-info { font-size: 12px; line-height: 1.7; opacity: .9; }
+
+/* Theme chips */
+.theme-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.theme-chip {
+  width: 28px; height: 28px; border-radius: 6px; border: 2px solid transparent;
+  cursor: pointer; transition: .2s;
+}
+.theme-chip.active { border-color: var(--gold); transform: scale(1.1); }
+
+/* AI Modal */
+.modal-bg {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; z-index: 200;
+  opacity: 0; visibility: hidden; transition: .3s;
+}
+.modal-bg.show { opacity: 1; visibility: visible; }
+.modal {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+  width: min(92%, 440px); padding: 24px;
+}
+.modal h3 { font-family: 'Playfair Display', serif; font-size: 20px; margin-bottom: 4px; }
+.modal .sub { color: var(--muted); font-size: 13px; margin-bottom: 16px; }
+.modal label { font-size: 12px; color: #bbb; display: block; margin-bottom: 4px; }
+.modal select, .modal textarea { width: 100%; margin-bottom: 12px; }
+.modal textarea { min-height: 100px; background: var(--panel2); color: #fff; border: 1px solid #333; border-radius: 8px; padding: 10px; }
+.modal-actions { display: flex; gap: 8px; margin-top: 8px; }
+.modal-actions .btn { flex: 1; text-align: center; }
+
+footer { text-align: center; padding: 24px; color: #555; font-size: 12px; border-top: 1px solid var(--border); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">UZB<span>Pro</span></div>
+  <div class="nav-tabs">
+    <button class="active" data-tab="taklifnoma">Taklifnoma</button>
+    <button data-tab="resume">Resume</button>
+    <button data-tab="vizitka">Vizitka</button>
+  </div>
+  <button class="btn secondary" id="openAI" style="display:none">AI ✦</button>
+</header>
+
+<!-- ========== TAKLIFNOMA ========== -->
+<section id="taklifnoma" class="section active">
+  <div class="section-title">Taklifnoma muharriri</div>
+  <div class="section-sub">Dizayn tanlang, matnni o‘zgartiring va PNG yuklab oling</div>
+  <div class="editor-grid">
+    <div class="controls">
+      <h3>Ma’lumotlar</h3>
+      <label>Tadbir nomi</label>
+      <input id="invTitle" value="Sizni to‘yimizga taklif qilamiz">
+      <label>Asosiy matn</label>
+      <textarea id="invNames">Aziz mehmonlarimiz!</textarea>
+      <label>Sana</label>
+      <input id="invDate" type="date">
+      <label>Vaqt</label>
+      <input id="invTime" type="time" value="18:00">
+      <label>Manzil</label>
+      <input id="invLoc" placeholder="Tadbir manzili">
+      <label>Qo‘shimcha</label>
+      <textarea id="invExtra" placeholder="Tilak yoki izoh..."></textarea>
+      <label>Dizayn (fon)</label>
+      <div class="theme-chips" id="invThemes"></div>
+      <label>Matn rangi</label>
+      <input id="invColor" type="color" value="#e6c67c">
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="invSave">Saqlash</button>
+        <button class="btn secondary" id="invPng">PNG</button>
+      </div>
+      <button class="btn secondary" id="invAI" style="width:100%;margin-top:10px">AI matn yozib ber ✦</button>
+    </div>
+    <div class="preview-box">
+      <div class="preview-label">Jonli ko‘rinish</div>
+      <div class="canvas inv-canvas" id="invCanvas" data-theme="darkgold">
+        <div class="orn">✦ ❦ ✦</div>
+        <h2 id="pTitle">Sizni to‘yimizga taklif qilamiz</h2>
+        <p id="pNames">Aziz mehmonlarimiz!</p>
+        <p id="pDate" style="font-size:13px;margin-top:8px">Sana va vaqt</p>
+        <p id="pLoc" style="font-size:13px">Tadbir manzili</p>
+        <p id="pExtra" style="font-size:12px;margin-top:6px"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== RESUME ========== -->
+<section id="resume" class="section">
+  <div class="section-title">Resume muharriri</div>
+  <div class="section-sub">Professional rezyume yarating va yuklab oling</div>
+  <div class="editor-grid">
+    <div class="controls">
+      <h3>Shaxsiy ma’lumot</h3>
+      <label>To‘liq ism</label>
+      <input id="resName" value="Ali Valiyev">
+      <label>Kasb / Lavozim</label>
+      <input id="resJob" value="Frontend Developer">
+      <label>Telefon</label>
+      <input id="resPhone" value="+998 90 123 45 67">
+      <label>Email</label>
+      <input id="resEmail" value="ali@example.com">
+      <label>Manzil</label>
+      <input id="resAddr" value="Toshkent, O‘zbekiston">
+      <label>O‘zim haqimda</label>
+      <textarea id="resAbout">2+ yillik tajribaga ega frontend dasturchi. React va zamonaviy web texnologiyalari bilan ishlayman.</textarea>
+      <h3 style="margin-top:18px">Ta’lim</h3>
+      <label>O‘quv yurti</label>
+      <input id="resEdu" value="TATU — Kompyuter injiniringi">
+      <label>Yillar</label>
+      <input id="resEduYear" value="2020 — 2024">
+      <h3 style="margin-top:18px">Ish tajribasi</h3>
+      <label>Kompaniya + lavozim</label>
+      <input id="resExp" value="TechCorp — Frontend Developer">
+      <label>Muddat</label>
+      <input id="resExpYear" value="2023 — hozirgacha">
+      <label>Vazifalar</label>
+      <textarea id="resExpDesc">React ilovalar ishlab chiqish, UI/UX optimizatsiya, jamoa bilan ishlash.</textarea>
+      <h3 style="margin-top:18px">Ko‘nikmalar</h3>
+      <label>Ko‘nikmalar (vergul bilan)</label>
+      <input id="resSkills" value="HTML, CSS, JavaScript, React, Figma">
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="resPng">PNG yuklash</button>
+      </div>
+    </div>
+    <div class="preview-box">
+      <div class="preview-label">Resume ko‘rinishi</div>
+      <div class="canvas res-canvas header-dark" id="resCanvas">
+        <div class="res-name" id="rName">Ali Valiyev</div>
+        <div class="res-title" id="rJob">Frontend Developer</div>
+        <div class="res-contact" id="rContact">+998 90 123 45 67 · ali@example.com · Toshkent</div>
+        <div class="res-section">
+          <h4>O‘zim haqimda</h4>
+          <div id="rAbout">2+ yillik tajribaga ega frontend dasturchi...</div>
+        </div>
+        <div class="res-section">
+          <h4>Ta’lim</h4>
+          <div class="res-item"><strong id="rEdu">TATU — Kompyuter injiniringi</strong><span id="rEduYear">2020 — 2024</span></div>
+        </div>
+        <div class="res-section">
+          <h4>Ish tajribasi</h4>
+          <div class="res-item"><strong id="rExp">TechCorp — Frontend Developer</strong><span id="rExpYear">2023 — hozirgacha</span><div id="rExpDesc" style="font-size:12px;margin-top:2px">React ilovalar...</div></div>
+        </div>
+        <div class="res-section">
+          <h4>Ko‘nikmalar</h4>
+          <div id="rSkills">HTML, CSS, JavaScript, React, Figma</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========== VIZITKA ========== -->
+<section id="vizitka" class="section">
+  <div class="section-title">Vizitka muharriri</div>
+  <div class="section-sub">Professional biznes kartochka yarating</div>
+  <div class="editor-grid">
+    <div class="controls">
+      <h3>Ma’lumotlar</h3>
+      <label>Ism</label>
+      <input id="vizName" value="Ali Valiyev">
+      <label>Lavozim</label>
+      <input id="vizJob" value="Frontend Developer">
+      <label>Telefon</label>
+      <input id="vizPhone" value="+998 90 123 45 67">
+      <label>Email</label>
+      <input id="vizEmail" value="ali@example.com">
+      <label>Telegram / Sayt</label>
+      <input id="vizSocial" value="@alivaliyev">
+      <label>Manzil (ixtiyoriy)</label>
+      <input id="vizAddr" placeholder="Toshkent">
+      <label>Dizayn</label>
+      <div class="theme-chips" id="vizThemes"></div>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="vizPng">PNG yuklash</button>
+      </div>
+    </div>
+    <div class="preview-box">
+      <div class="preview-label">Vizitka ko‘rinishi</div>
+      <div class="canvas viz-canvas" id="vizCanvas" data-theme="gold">
+        <div class="viz-name" id="vName">Ali Valiyev</div>
+        <div class="viz-job" id="vJob">Frontend Developer</div>
+        <div class="viz-info" id="vInfo">
+          +998 90 123 45 67<br>
+          ali@example.com<br>
+          @alivaliyev
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>© 2026 UZBPro · Taklifnoma · Resume · Vizitka</footer>
+
+<!-- AI Modal -->
+<div class="modal-bg" id="aiModal">
+  <div class="modal">
+    <h3>AI Matn yordamchisi ✦</h3>
+    <p class="sub">Tadbir turini tanlang — AI chiroyli matn yozib beradi</p>
+    <label>Tadbir turi</label>
+    <select id="aiType">
+      <option value="wedding">To‘y</option>
+      <option value="birthday">Tug‘ilgan kun</option>
+      <option value="engagement">Fotiha / Unashtiruv</option>
+      <option value="formal">Rasmiy</option>
+      <option value="kids">Bolalar bayrami</option>
+    </select>
+    <label>Yaratilgan matn</label>
+    <textarea id="aiText" readonly></textarea>
+    <div class="modal-actions">
+      <button class="btn secondary" id="aiGen">Yaratish</button>
+      <button class="btn" id="aiApply">Qo‘llash</button>
+      <button class="btn secondary" id="aiClose">Yopish</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ========== TABS ==========
+document.querySelectorAll('.nav-tabs button').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    document.getElementById('openAI').style.display = btn.dataset.tab === 'taklifnoma' ? 'block' : 'none';
+  };
+});
+
+// ========== TAKLIFNOMA ==========
+const invThemes = [
+  {id:'darkgold', color:'#1a140c', name:'Qora-oltin'},
+  {id:'gold', color:'#2e2210', name:'Premium'},
+  {id:'luxury', color:'#2a1520', name:'Hashamatli'},
+  {id:'geometry', color:'#2e251c', name:'Geometrik'},
+  {id:'blue', color:'#0c1e33', name:'Tungi ko‘k'},
+  {id:'green', color:'#0f2a22', name:'Zumrad'},
+  {id:'flower', color:'#d3a6a4', name:'Gulli'},
+  {id:'rose', color:'#c58b9e', name:'Gulrang'},
+  {id:'minimal', color:'#f1eadb', name:'Minimal'},
+  {id:'light', color:'#fff9f0', name:'Nafis'}
+];
+const invThemeBox = document.getElementById('invThemes');
+invThemes.forEach(t => {
+  const chip = document.createElement('div');
+  chip.className = 'theme-chip' + (t.id==='darkgold'?' active':'');
+  chip.style.background = t.color;
+  chip.title = t.name;
+  chip.onclick = () => {
+    document.querySelectorAll('#invThemes .theme-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    document.getElementById('invCanvas').dataset.theme = t.id;
+  };
+  invThemeBox.appendChild(chip);
+});
+
+function updateInv() {
+  document.getElementById('pTitle').textContent = document.getElementById('invTitle').value || 'Taklifnoma';
+  document.getElementById('pNames').textContent = document.getElementById('invNames').value;
+  const d = document.getElementById('invDate').value;
+  const t = document.getElementById('invTime').value;
+  document.getElementById('pDate').textContent = [d,t].filter(Boolean).join(' · ') || 'Sana va vaqt';
+  document.getElementById('pLoc').textContent = document.getElementById('invLoc').value || 'Tadbir manzili';
+  document.getElementById('pExtra').textContent = document.getElementById('invExtra').value;
+  document.getElementById('pTitle').style.color = document.getElementById('invColor').value;
+}
+['invTitle','invNames','invDate','invTime','invLoc','invExtra','invColor'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateInv);
+});
+
+// AI
+const aiTexts = {
+  wedding: ["Aziz mehmonlarimiz!\nSizni baxtli kunimiz — to‘yimizga taklif qilamiz.\nBirga bo‘lishingiz biz uchun katta sharaf.", "Hurmatli mehmonlar!\nHayotimizning eng muhim kuniga taklif etamiz.\nSizning ishtirokingiz bizni xursand qiladi."],
+  birthday: ["Aziz do‘stlar!\nTug‘ilgan kunimni birga nishonlashga taklif qilaman.\nSizning borligingiz kunimni yanada yorqin qiladi!", "Hurmatli mehmonlar!\nYana bir yil o‘tdi... Tug‘ilgan kunimni siz bilan nishonlamoqchiman."],
+  engagement: ["Azizlar!\nFotiha marosimimizga taklif etamiz.\nYangi boshlanishimizda birga bo‘lishingizni so‘raymiz."],
+  formal: ["Hurmatli mehmonlar!\nRasmiy tadbirimizga taklif etamiz.\nSizning ishtirokingiz biz uchun muhim."],
+  kids: ["Aziz bolajonlar va ota-onalar!\nBolalar bayramimizga taklif qilamiz.\nO‘yin-kulgi va sovg‘alar kutmoqda!"]
+};
+const aiModal = document.getElementById('aiModal');
+document.getElementById('invAI').onclick = () => aiModal.classList.add('show');
+document.getElementById('openAI').onclick = () => aiModal.classList.add('show');
+document.getElementById('aiClose').onclick = () => aiModal.classList.remove('show');
+document.getElementById('aiGen').onclick = () => {
+  const type = document.getElementById('aiType').value;
+  const list = aiTexts[type] || aiTexts.formal;
+  document.getElementById('aiText').value = list[Math.floor(Math.random()*list.length)];
+};
+document.getElementById('aiApply').onclick = () => {
+  const text = document.getElementById('aiText').value.trim();
+  if (!text) return;
+  const lines = text.split('\n').filter(l => l.trim());
+  if (lines[0]) document.getElementById('invTitle').value = lines[0];
+  if (lines.length > 1) document.getElementById('invNames').value = lines.slice(1).join('\n');
+  updateInv();
+  aiModal.classList.remove('show');
+};
+
+// PNG helper
+function downloadPng(el, name) {
+  const rect = el.getBoundingClientRect();
+  const w = Math.round(rect.width * 2);
+  const h = Math.round(rect.height * 2);
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+      <foreignObject width="100%" height="100%">
+        <div xmlns="http://www.w3.org/1999/xhtml" style="width:${rect.width}px;height:${rect.height}px;transform:scale(2);transform-origin:0 0">
+          ${el.outerHTML}
+        </div>
+      </foreignObject>
+    </svg>`;
+  // Oddiy usul — brauzer print yoki keyinroq html2canvas qo‘shiladi
+  alert('PNG yuklash uchun hozircha brauzerda o‘ng tugma → "Save image" yoki keyingi versiyada to‘liq qo‘shiladi.\n(Hozircha ko‘rinishni skrin qilib olishingiz mumkin)');
+}
+
+document.getElementById('invPng').onclick = () => downloadPng(document.getElementById('invCanvas'), 'taklifnoma');
+document.getElementById('resPng').onclick = () => downloadPng(document.getElementById('resCanvas'), 'resume');
+document.getElementById('vizPng').onclick = () => downloadPng(document.getElementById('vizCanvas'), 'vizitka');
+
+// ========== RESUME ==========
+function updateRes() {
+  document.getElementById('rName').textContent = document.getElementById('resName').value;
+  document.getElementById('rJob').textContent = document.getElementById('resJob').value;
+  document.getElementById('rContact').textContent =
+    `${document.getElementById('resPhone').value} · ${document.getElementById('resEmail').value} · ${document.getElementById('resAddr').value}`;
+  document.getElementById('rAbout').textContent = document.getElementById('resAbout').value;
+  document.getElementById('rEdu').textContent = document.getElementById('resEdu').value;
+  document.getElementById('rEduYear').textContent = document.getElementById('resEduYear').value;
+  document.getElementById('rExp').textContent = document.getElementById('resExp').value;
+  document.getElementById('rExpYear').textContent = document.getElementById('resExpYear').value;
+  document.getElementById('rExpDesc').textContent = document.getElementById('resExpDesc').value;
+  document.getElementById('rSkills').textContent = document.getElementById('resSkills').value;
+}
+['resName','resJob','resPhone','resEmail','resAddr','resAbout','resEdu','resEduYear','resExp','resExpYear','resExpDesc','resSkills']
+  .forEach(id => document.getElementById(id).addEventListener('input', updateRes));
+
+// ========== VIZITKA ==========
+const vizThemes = [
+  {id:'gold', color:'#2a1f10'},
+  {id:'dark', color:'#111'},
+  {id:'light', color:'#f8f4ec'},
+  {id:'blue', color:'#0c1a2e'},
+  {id:'green', color:'#0c2218'}
+];
+const vizBox = document.getElementById('vizThemes');
+vizThemes.forEach((t,i) => {
+  const chip = document.createElement('div');
+  chip.className = 'theme-chip' + (i===0?' active':'');
+  chip.style.background = t.color;
+  chip.onclick = () => {
+    document.querySelectorAll('#vizThemes .theme-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    document.getElementById('vizCanvas').dataset.theme = t.id;
+  };
+  vizBox.appendChild(chip);
+});
+
+function updateViz() {
+  document.getElementById('vName').textContent = document.getElementById('vizName').value;
+  document.getElementById('vJob').textContent = document.getElementById('vizJob').value;
+  const lines = [
+    document.getElementById('vizPhone').value,
+    document.getElementById('vizEmail').value,
+    document.getElementById('vizSocial').value,
+    document.getElementById('vizAddr').value
+  ].filter(Boolean);
+  document.getElementById('vInfo').innerHTML = lines.join('<br>');
+}
+['vizName','vizJob','vizPhone','vizEmail','vizSocial','vizAddr'].forEach(id => {
+  document.getElementById(id).addEventListener('input', updateViz);
+});
+
+updateInv();
+updateRes();
+updateViz();
+</script>
+</body>
+</html>
